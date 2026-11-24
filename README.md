@@ -84,40 +84,26 @@ from python3.
 
 For expected test outputs, see [the test dataset notes](tests/test_data/README.md).
 
-### Tested Zhores configuration
+### Tested setup
 
-The bundled tests were run on Linux with Nextflow 24.10.6, Java 11 and
-Apptainer through the `test,singularity` profile. The cached and stub tests each used one Slurm
-allocation with four CPUs and 16 GB of memory. Nextflow ran tasks locally
-inside that allocation.
+The `test,singularity` smoke test was run on Linux with Nextflow 24.10.6,
+Java 11, and Apptainer 1.2.5. See [Troubleshooting](#troubleshooting) for the
+Zhores setup used to complete the test with fresh caches.
 
-Use `NXF_VER=24.10.6` with a version-aware Nextflow launcher, or select that
-version explicitly. On clusters where the optional update check stalls,
-set `NXF_DISABLE_CHECK_LATEST=true`.
+## Troubleshooting
 
-The full test used existing container and Conda caches, a prebuilt Earl Grey
-7.2.6 environment, an indexed Pfam database and a Starfish 1.1.0 environment.
-Point `--singularity_cache_dir`, `--conda_cachedir`, `--pfam_db` and
-`--starfish_env` to the corresponding paths at your site. A Nextflow site
-configuration can select the prebuilt Earl Grey environment for the
-`TEANNOTATE:DENOVO_TE_FUNGUS:EARLGREY` process. The rerun reused the cached
-HiTE LtrDetector and classifier assets from the earlier test. Allow time and
-storage for downloads on a fresh installation.
+### Zhores fresh-cache test
 
-The all-route stub used a site configuration that disabled environment and
-container provisioning. It checked the animal, plant and fungal fixtures
-and verified that their final libraries preserved the supplied user
-records. The full test used real tools on the bundled fungal chromosome.
-A separate run started with empty container, Conda and asset caches and
-completed the fungal smoke test (Zhores job 8564796). It used Apptainer 1.2.5,
-micromamba 2.3.3, and six CPUs with 24 GB of memory. Set
-`APPTAINER_TMPDIR` to node-local scratch for image unpacking,
-`PYTHONNOUSERSITE=1` to isolate Python environments, and
-`conda.useMicromamba = true` in a Nextflow site configuration when using
-micromamba. Apptainer 1.2.5 returned HTTP 403 on the automatic Terrier ORAS
-pull at this site. The completed run used freshly downloaded and
-checksum-verified Terrier, CREATE, and NeuralTE SIF images in the configured
-Singularity cache. The cold test covered the fungal route.
+Apptainer 1.2.5 returned HTTP 403 while pulling the Terrier image from GitHub
+Container Registry. The test passed after the public Terrier, CREATE, and
+NeuralTE images were downloaded from the registry and verified against their
+published SHA-256 checksums. Place the verified images in the cache selected
+by `--singularity_cache_dir` using the filenames shown in
+[the container prefetch script](bin/prepull_containers.sh).
+
+Use node-local scratch for `APPTAINER_TMPDIR` and set `PYTHONNOUSERSITE=1`
+before launching Nextflow. The test used micromamba 2.3.3 with
+`conda.useMicromamba = true` in its Nextflow site configuration.
 
 ## License and benchmark reproducibility
 
