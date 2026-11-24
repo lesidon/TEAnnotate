@@ -4,6 +4,8 @@ TEAnnotate is a Nextflow workflow for annotating transposable elements (TEs) in 
 
 ## Workflow
 
+[![TEAnnotate workflow from input validation through lineage-specific discovery, library construction, classification, and masking](docs/figures/fig1_pipeline.png)](docs/figures/fig1_pipeline.pdf)
+
 | Input lineage | Discovery tools |
 | --- | --- |
 | Animal | Earl Grey and HiTE |
